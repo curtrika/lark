@@ -1,0 +1,88 @@
+---
+# Lint directives.
+lint:
+  # Linter rules.
+  # Run `protolint list` to see all available rules.
+  rules:
+    # Determines whether to include the default set of linters.
+    #no_default: true
+
+    # Set the default to all linters. This option works the other way around as no_default does.
+    # If you want to enable this option, delete the comment out below and no_default.
+    #all_default: true
+
+    # The specific linters to add.
+    add:
+      - MAX_LINE_LENGTH
+      - SERVICE_NAMES_UPPER_CAMEL_CASE
+      - SERVICE_NAMES_END_WITH
+      - RPC_NAMES_UPPER_CAMEL_CASE
+      - MESSAGE_NAMES_UPPER_CAMEL_CASE
+      - ENUM_NAMES_UPPER_CAMEL_CASE
+
+
+  # Linter rules option.
+  rules_option:
+    # MAX_LINE_LENGTH rule option.
+    max_line_length:
+      # Enforces a maximum line length
+      max_chars: 240
+      # Specifies the character count for tab characters
+      tab_chars: 2
+
+    # INDENT rule option.
+    indent:
+      # Available styles are 4(4-spaces), 2(2-spaces) or tab.
+      style: 2
+      # Specifies if it should stop considering and inserting new lines at the appropriate positions
+      # when the inner elements are on the same line. Default is false.
+      not_insert_newline: true
+
+    # FILE_NAMES_LOWER_SNAKE_CASE rule option.
+    file_names_lower_snake_case:
+      excludes:
+        - ../proto/invalidFileName.proto
+
+    # QUOTE_CONSISTENT rule option.
+    quote_consistent:
+      # Available quote are "double" or "single".
+      quote: double
+
+    # ENUM_FIELD_NAMES_ZERO_VALUE_END_WITH rule option.
+    enum_field_names_zero_value_end_with:
+      suffix: UNSPECIFIED
+
+    # SERVICE_NAMES_END_WITH rule option.
+    service_names_end_with:
+      text: Service
+
+    # FIELD_NAMES_EXCLUDE_PREPOSITIONS rule option.
+    field_names_exclude_prepositions:
+      # The specific prepositions to determine if the field name includes.
+      prepositions:
+        - for
+        - at
+        - of
+      # The specific keywords including prepositions to ignore. E.g. end_of_support is a term you would like to use, and skip checking.
+      excludes:
+        - end_of_support
+
+    # REPEATED_FIELD_NAMES_PLURALIZED rule option.
+    ## The spec for each rules follows the implementation of https://github.com/gertd/go-pluralize.
+    ## Plus, you can refer to this rule's test code.
+    repeated_field_names_pluralized:
+      uncountable_rules:
+        - paper
+      irregular_rules:
+        Irregular: Regular
+
+    # MESSAGE_NAMES_EXCLUDE_PREPOSITIONS rule option.
+    message_names_exclude_prepositions:
+      # The specific prepositions to determine if the message name includes.
+      prepositions:
+        - With
+        - For
+        - Of
+      # The specific keywords including prepositions to ignore. E.g. EndOfSupport is a term you would like to use, and skip checking.
+      excludes:
+        - EndOfSupport
