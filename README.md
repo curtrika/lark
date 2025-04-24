@@ -1,99 +1,90 @@
-# Lark - Инструмент для работы с Proto-файлами
+# Lark
 
-Lark - это мощный инструмент для автоматизации работы с proto-файлами в Go-проектах. Он предоставляет комплексное решение для генерации кода, документации и валидации proto-файлов.
+A standardized Docker-based build environment for go.pb, grpc.pb, gw.pb и swagger doc.
 
-## Основные возможности
+## Overview
 
-- ✨ Генерация Go-кода из proto-файлов
-- 🌐 Генерация gRPC-кода
-- 🔄 Генерация gRPC-Gateway кода
-- 📚 Генерация Swagger/OpenAPI документации
-- 🔍 Линтинг proto-файлов
-- ⚡ Кэширование результатов генерации
-- 🏷️ Вставка кастомных тегов в сгенерированные структуры
+This project provides a standardized Docker environment for generating Protocol Buffers (go.pb, grpc.pb, gw.pb) and Swagger documentation from .proto files. It helps teams maintain consistency in their build process by ensuring all developers use the same versions of build tools and libraries.
 
-## Системные требования
+## Problem Statement
 
-- Go 1.22.1+
+When working with Protocol Buffers in a team environment, different developers often use different versions of build tools and libraries, which can lead to:
+- Inconsistent generated code
+- Merge conflicts in generated files
+- Version mismatches between team members
+- Time wasted on resolving build-related issues
+
+## Solution
+
+This project provides a Docker-based solution that:
+- Standardizes the build environment
+- Ensures consistent versions of all required tools
+- Simplifies the build process
+- Reduces merge conflicts in generated files
+
+## Features
+
+- Docker-based build environment
+- Standardized tool versions
+- Support for Protocol Buffers compilation
+- Swagger documentation generation
+- Task-based build system
+
+## Prerequisites
+
 - Docker
-- protoc 26.1+
-- protoc-gen-go 1.33.0+
-- protoc-gen-go-grpc 1.3.0+
-- protoc-gen-doc 1.5.1+
-- protoc-gen-grpc-gateway 2.19.1+
-- protoc-gen-openapi 2.19.1+
-- protoc-go-inject-tag 1.4.0+
-- protolint 0.49.4+
+- Task (task runner)
+- Git
 
-## Быстрый старт
+## Installation
 
-### Установка
-
+1. Clone the repository:
 ```bash
-git clone <repository-url>
-cd <project-directory>
-go mod download
+git clone git@github.com:curtrika/lark.git
+cd lark
+rm -rf .git
 ```
 
-### Основные команды
-
-```bash
-# Полная генерация (линт + генерация + инъекция тегов)
-task protogen-generate
-
-# Линтинг proto-файлов
-task proto-lint
-
-# Генерация кода
-task proto-gen
-
-# Инъекция тегов
-task proto-inject
-```
-
-## Конфигурация
-
-### Основной конфигурационный файл (lark.yml)
-
+2. Include Lark Taskfile in your project (one level above this repository):
 ```yaml
-vars:
-  SWAGGER_TARGET: "/docs"  # Директория для Swagger документации
-  SWAGGER_OPTS: "..."      # Опции для генерации Swagger
+version: '3'
+tasks:
+  {...}
 
-env:
-  PROTOGEN_SRC: "{{.USER_WORKING_DIR}}/api"      # Исходная директория proto-файлов
-  PROTOGEN_TARGET: "{{.USER_WORKING_DIR}}/pkg/proto"  # Директория для генерации
+includes:
+  lark:
+    taskfile: ./lark/lark.yml
 ```
 
-## Система кэширования
+## Usage
 
-### Как работает кэширование
-
-1. **Создание хешей**:
-   - Каждый proto-файл получает уникальный хеш (SHA-256)
-   - Хеши сохраняются в `.cache` внутри `PROTOGEN_TARGET`
-   - Формат: `<proto-file-name>.hash`
-
-2. **Процесс валидации**:
-   - Автоматическая проверка хешей при каждом запуске
-   - Генерация только для измененных файлов
-   - Оптимизация времени сборки
-
-## Структура проекта
-
+1. Build the Docker image:
 ```
-lark/
-├── Dockerfile           # Docker-образ для генерации
-├── docker_build.sh     # Скрипт сборки Docker-образа
-├── docker_run.sh       # Скрипт запуска Docker-контейнера
-├── lark.yml          # Конфигурация задач
-├── .protolint.yaml    # Конфигурация линтера
-└── scripts/
-    ├── proto_gen.sh   # Скрипт генерации
-    ├── proto_lint.sh  # Скрипт линтинга
-    ├── proto_inject.sh # Скрипт инъекции тегов
+task lark:build
 ```
 
-## Лицензия
+2. Run the image:
+```
+task lark:run
+```
 
-MIT 
+## Contributing
+
+We welcome contributions! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Roadmap
+
+- [ ] Fix bug with imports
+- [x] Implement caching for faster builds
+- [ ] Add usage examples
+- [ ] Create more comprehensive documentation

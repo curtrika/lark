@@ -1,24 +1,24 @@
 #!/bin/sh
 echo -e "${ORANGE}Protoc generate go,grpc,gw and openapiv2 docs${NC}"
 
-# Создаем директорию для кэша если её нет
+# Create cache directory if it doesn't exist
 CACHE_DIR="${PROTOGEN_TARGET}/.cache"
 mkdir -p ${CACHE_DIR}
 mkdir -p ${PROTOGEN_TARGET}
 mkdir -p ${PROTOSWAGGER_TARGET}
 
-# Функция для получения хэша файла
+# Function to get file hash
 get_file_hash() {
     sha256sum "$1" | cut -d' ' -f1
 }
 
-# Функция для проверки необходимости регенерации
+# Function to check if regeneration is needed
 needs_regeneration() {
     local proto_file="$1"
     local cache_file="${CACHE_DIR}/$(basename ${proto_file}).hash"
     
     if [ ! -f "${cache_file}" ]; then
-        return 0 # true, нужна генерация
+        return 0 # true, regeneration needed
     fi
     
     local current_hash=$(get_file_hash "${proto_file}")
@@ -27,18 +27,18 @@ needs_regeneration() {
     [ "${current_hash}" != "${cached_hash}" ]
 }
 
-# Получаем список proto файлов
+# Get list of proto files
 PROTO_FILES=$(find ${PROTOGEN_SRC} -name '*.proto')
 CHANGED_FILES=""
 
-# Проверяем какие файлы изменились
+# Check which files have changed
 for proto_file in ${PROTO_FILES}; do
     if needs_regeneration "${proto_file}"; then
         CHANGED_FILES="${CHANGED_FILES} ${proto_file}"
     fi
 done
 
-# Если нет измененных файлов, выходим
+# If no files changed, exit
 if [ -z "${CHANGED_FILES}" ]; then
     echo -e "${GREEN}No changes detected in proto files${NC}"
     exit 0
@@ -46,7 +46,7 @@ fi
 
 echo -e "${ORANGE}Generating protobuf files for changed protos${NC}"
 
-# Очищаем старые сгенерированные файлы
+# Clean old generated files
 for file in $(find ${PROTOGEN_TARGET} -name '*.pb.*'); do
     rm "$file"
 done
@@ -59,13 +59,13 @@ for file in $(find ${PROTOSWAGGER_TARGET} -name '*.swagger.json'); do
     rm "$file"
 done
 
-# Сохраняем текущие хэши во временную директорию
+# Save current hashes to temporary directory
 TMP_CACHE_DIR=$(mktemp -d)
 for proto_file in ${CHANGED_FILES}; do
     get_file_hash "${proto_file}" > "${TMP_CACHE_DIR}/$(basename ${proto_file}).hash"
 done
 
-# Запускаем генерацию
+# Run generation
 if protoc \
     --proto_path ${PROTOGEN_SRC} \
     --proto_path "/proto" \
@@ -82,7 +82,7 @@ if protoc \
     -I /proto/protovalidate \
     ${CHANGED_FILES}; then
     
-    # Если генерация успешна, обновляем кэш
+    # If generation successful, update cache
     for hash_file in "${TMP_CACHE_DIR}"/*.hash; do
         mv "${hash_file}" "${CACHE_DIR}/$(basename ${hash_file})"
     done

@@ -1,11 +1,11 @@
 version: '3'
 
-## Данные переменные можно переопределять в своем Taskfile
-## Больше информации на - https://taskfile.dev/
+## These variables can be overridden in your Taskfile
+## More information at - https://taskfile.dev/
 vars:
   SWAGGER_TARGET: "/docs"
-  ## Кастомизация OpenAPI плагина,
-  ## больше информации - https://grpc-ecosystem.github.io/grpc-gateway/docs/mapping/customizing_openapi_output/
+  ## OpenAPI plugin customization,
+  ## more information - https://grpc-ecosystem.github.io/grpc-gateway/docs/mapping/customizing_openapi_output/
   SWAGGER_OPTS: "allow_merge=true,merge_file_name=promo_code_service,logtostderr=true,json_names_for_fields=true,generate_unbound_methods=true,omit_enum_default_value=true,disable_service_tags=false,disable_default_errors=false"
 
 env:
@@ -32,32 +32,34 @@ env:
 
 
 tasks:
-  docker-build:
+  build:
+    desc: "Build Lark Docker image"
     cmds:
       - ./lark/docker_build.sh
     silent: true
 
 
-  docker-run:
+  run:
+    desc: "Run Lark in Docker container"
     cmds:
       - ./lark/docker_run.sh
     silent: true
 
 
   proto-lint:
-    desc: "Линтер протофайлов"
+    desc: "Proto files linter"
     cmd: ./lark/scripts/proto_lint.sh
     silent: true
 
 
   proto-gen:
-    desc: "Генерация go.pb, grpc.pb, gw.pb и swagger doc"
+    desc: "Generate go.pb, grpc.pb, gw.pb and swagger doc"
     cmd: ./lark/scripts/proto_gen.sh
     silent: true
 
 
   proto-inject:
-    desc: "Вставка кастомных тегов в сгенерированные структуры"
+    desc: "Insert custom tags into generated structures"
     cmd: ./lark/scripts/proto_inject.sh
     silent: true
 
