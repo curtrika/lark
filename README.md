@@ -56,6 +56,27 @@ includes:
     taskfile: ./lark/lark.yml
 ```
 
+## Example of project structure
+
+Here's an example of a project structure:
+
+```
+.
+├── Taskfile.yml
+├── api
+│   └── your_service
+│       └── v1
+│           ├── get_method.proto
+│           └── service.proto
+├── docs
+│   └── your_service.swagger.json
+├── lark
+├── pkg
+└── proto_libs
+```
+
+> ⚠️ **Important**: Make sure to properly configure Proto Path in your project to avoid potential import issues.
+
 ## Usage
 
 1. Build the Docker image:
